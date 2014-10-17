@@ -12,16 +12,22 @@ int vazia(TPilha *p) {
     return p->prim == NULL;
 }
 
-void push(TPilha *p, int elem) {
+void push(TPilha *p, char naipe, char carta) {
     TNo *novo = (TNo*) malloc(sizeof (TNo));
-    novo-> info = elem;
+    novo-> naipe = naipe;
+    novo->carta = carta;
     novo-> prox = p->prim;
     p->prim = novo;
 }
-
-int pop(TPilha *p) {
-    if (vazia(p)exit(1));
-    int resp = p->prim->info;
+/**
+ * 
+ * @param p
+ * @return String de tam 2, onde primeiro char é o naipe e o segundo a carta
+ */
+char* pop(TPilha *p) {
+    if (vazia(p)exit(1)); 
+    char resp[2] = p->prim->naipe;
+    strcat(resp,p->prim->carta); // concatena o char da carta no naipe para poder retornar;
     TNo *q = p->prim;
     p->prim = p->prim->prox;
     free(q);
