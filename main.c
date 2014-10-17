@@ -18,11 +18,12 @@ int main(int argc, char** argv) {
         printf("Erro na abertura do arquivo, tente novamente:");
         exit(1);
     }
-    char tmp[10];
+    char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s O que sei é q ele tá pegando o espaço :s
+    //Para no linux ler direto do arquivo como se fosse do teclado, basta mudar o argumento "fp" para "stdin"
     fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
     while (!feof(fp)) {
-        printf("=> %s \n", tmp); 
-        fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
+        printf("=> %c_%c\n", tmp[0],tmp[1]); 
+        fscanf(fp, " %2[^\n]", tmp);
     }
     system("pause");
     return (EXIT_SUCCESS);

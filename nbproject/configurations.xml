@@ -8,7 +8,19 @@
     <logicalFolder name="SourceFiles"
                    displayName="Arquivos de Código-Fonte"
                    projectFiles="true">
-      <itemPath>main.c</itemPath>
+      <logicalFolder name="Trabalho-ED1-2014.2"
+                     displayName="Trabalho-ED1-2014.2"
+                     projectFiles="true">
+        <itemPath>Freecell.c</itemPath>
+        <itemPath>Freecell.h</itemPath>
+        <itemPath>Makefile</itemPath>
+        <itemPath>TNo.c</itemPath>
+        <itemPath>TNo.h</itemPath>
+        <itemPath>TPilha.c</itemPath>
+        <itemPath>TPilha.h</itemPath>
+        <itemPath>entrada.txt</itemPath>
+        <itemPath>main.c</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Arquivos de Recurso"
@@ -26,6 +38,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">

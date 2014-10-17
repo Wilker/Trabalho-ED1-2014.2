@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-TPilha *cria(void) {
+TPilha *criaPilhaDeCartas(void) {
     TPilha *p = (TPilha*) malloc(sizeof (TPilha));
     p->prim = NULL;
     return p;
@@ -12,7 +12,7 @@ int vazia(TPilha *p) {
     return p->prim == NULL;
 }
 
-void push(TPilha *p, char naipe, char carta) {
+void pushCarta(TPilha *p, char naipe, char carta) {
     TNo *novo = (TNo*) malloc(sizeof (TNo));
     novo-> naipe = naipe;
     novo->carta = carta;
@@ -25,13 +25,14 @@ void push(TPilha *p, char naipe, char carta) {
  * @return String de tam 2, onde primeiro char é o naipe e o segundo a carta
  */
 char* pop(TPilha *p) {
-    if (vazia(p)exit(1)); 
-    char resp[2] = p->prim->naipe;
-    strcat(resp,p->prim->carta); // concatena o char da carta no naipe para poder retornar;
+    if (vazia(p))exit(1); 
+    char resp[2];
+    resp[0]=p->prim->naipe;
+    resp[1]=p->prim->carta;
     TNo *q = p->prim;
     p->prim = p->prim->prox;
     free(q);
-    return resp;
+    return resp; // Arrumar para retornar o conteúdo de resp.
 }
 
 void libera(TPilha *p) {
@@ -43,3 +44,5 @@ void libera(TPilha *p) {
     }
     free(p);
 }
+
+//Falta implementar a impressão das pilhas de cartas, do estado atual do topo.

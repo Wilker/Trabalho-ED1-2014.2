@@ -14,9 +14,9 @@ typedef struct pilha{
 }TPilha;
 
 int vazia(TPilha *p);
-TPilha *cria (void);
-void push(TPilha *p, int elem);
-int pop(TPilha *p);
+TPilha *criaPilhaDeCartas (void);
+void pushCarta(TPilha *p, char naipe, char carta);
+char* pop(TPilha *p);
 void libera (TPilha *p);
 
 #endif	/* TPILHA_H */
