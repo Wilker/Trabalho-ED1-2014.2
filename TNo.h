@@ -9,7 +9,8 @@
 #define	TNO_H
 
 typedef struct no{
-    int info;
+    char naipe ;
+    char carta;
     struct no *prox;
 }TNo;
 
