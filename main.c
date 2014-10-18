@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
         printf("=> %c_%c\n", tmp[0],tmp[1]); 
         fscanf(fp, " %2[^\n]", tmp);
     }
+    fclose(fp);
     system("pause");
     return (EXIT_SUCCESS);
 }
