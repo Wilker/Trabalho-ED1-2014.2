@@ -1,10 +1,20 @@
 #include "TPilha.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define TAM_PILHAS_CARTAS 8
 #define TAM_PILHAS_NAIPE 4
 #define TAM_PILHAS_RESERVA 4
 
+typedef struct freecell {
+    // Tô pensando em criar um strutura freecell com 3 vetores dentro 1 para cada
+    // pilha, ao invés de o usuário ter q passá-las no main. 
+    // Assim terei q modificar os headers das funções abaixo para receberem uma Struct Freecell
+    // Mover para o arquivo.h
+    TPilha **cartas; // Pilhas de A a H
+    TPilha **naipe; // Pilhas de 0 a 3
+    TPilha **reserva; // Pilhas de W a Z
+} Freecell;
 
 /* Os naipes estão separados da seguinte forma '0' = copas, '1' = paus, '2' = ouro, '3' = espada
  * As cartas estão separadas da seguinte forma ('A' = às, 'B' = 2, 'C' = 3, ..., 'J' = 10, 'K'
@@ -24,20 +34,20 @@
  * @param naipe
  * @param reserva
  */
-void criaMesa(TPilha **cartas, TPilha **naipe, TPilha **reserva) {
+void criaMesa(Freecell *frecell) {
     int i;
     for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
-        cartas[i] = criaPilhaDeCartas();
+        freecell->cartas[i] = criaPilhaDeCartas();
     }
     for (i = 0; i < TAM_PILHAS_NAIPE; i++) {
-        naipe[i] = criaPilhaDeCartas();
+        freecell->naipe[i] = criaPilhaDeCartas();
     }
     for (i = 0; i < TAM_PILHAS_RESERVA; i++) {
-        reserva[i] = criaPilhaDeCartas();
+        frecell->reserva[i] = criaPilhaDeCartas();
     }
 }
 
-void preenchePilhaDeCartas(TPilha **pilha, char* caminho) {
+void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
     // O lance aqui é fazer um contador de 1 a 52, enqt cont <52 ele distrubui as cartas
     int cont = 1; //contador para a quantidade de cartas que será lida do arquivo
     int contPilha = 0; // contador para saber em qual pilha será inserida a carta
@@ -50,11 +60,49 @@ void preenchePilhaDeCartas(TPilha **pilha, char* caminho) {
     char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s
     fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
     while (!feof(fp)) {
-        pushCarta(pilha[contPilha], tmp[0], tmp[1]);
+        pushCarta(freecell->cartas[contPilha], tmp[0], tmp[1]);
         cont++;
         contPilha++;
         if (contPilha == 8) contPilha = 0;
     }
     fscanf(fp, " %2[^\n]", tmp);
     fclose(fp);
-} 
+}
+
+/**
+ * Recebe uma String de movimentação com 2 caracteres, o primeiro é a pilha de origem
+ * e o segundo a pilha de destino
+ * --------------------------------------------------
+ * Pilhas de A a H são as pilhas de Cartas
+ * Pilhas de 0 a 3 são as pilhas agrupadas pelo naipe
+ * Pilhas de W a Z são as pilhas reservas 
+ * --------------------------------------------------
+ * @return 1 se é possível realizar o movimento e 0 caso contrário e -1 caso a string seja
+ * inválida
+ */
+int moveCartaDaPilha(char *mover, Freecell *freecell) {
+    if (strlen(mover) < 2) return -1;
+    char tmp[2];
+    //Esta parte resolve a pilha de origem
+    if ((mover[0] >= 'A') && (mover[0] <= 'H')) {
+        tmp = pop(freecell->cartas[mover[0] - 65]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
+    }
+    if ((mover[0] >= '0') && (mover[0] <= '3')) {
+        tmp = pop(freecell->naipe[mover[0]]);
+    }
+    if ((mover[0] >= 'W') && (mover[0] <= 'Z')) { // Código ASCII da Letra A é  87, descontando 65 dará a pilha correta que devera ser movida a carta
+        tmp = pop(freecell->reserva[mover[0] - 87]);
+    }
+    //Esta parte, resolve a pilha de destino
+    //Rever esta parte, pois estou caindo de sono!!
+    if ((mover[1] >= 'A') && (mover[1] <= 'H')) {
+        pushCarta(freecell->cartas[tmp[1] - 65]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
+    }
+    if ((mover[1] >= '0') && (mover[1] <= '3')) {
+        tmp = pop(freecell->naipe[tmp[1]]);
+    }
+    if ((mover[1] >= 'W') && (mover[1] <= 'Z')) { // Código ASCII da Letra A é  87, descontando 65 dará a pilha correta que devera ser movida a carta
+        tmp = pop(freecell->reserva[tmp[1] - 87]);
+    }
+
+}
