@@ -7,9 +7,7 @@
 #define TAM_PILHAS_RESERVA 4
 
 typedef struct freecell {
-    // Tô pensando em criar um strutura freecell com 3 vetores dentro 1 para cada
-    // pilha, ao invés de o usuário ter q passá-las no main. 
-    // Assim terei q modificar os headers das funções abaixo para receberem uma Struct Freecell
+    // 
     // Mover para o arquivo.h
     TPilha **cartas; // Pilhas de A a H
     TPilha **naipe; // Pilhas de 0 a 3
@@ -77,6 +75,8 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
  * Pilhas de 0 a 3 são as pilhas agrupadas pelo naipe
  * Pilhas de W a Z são as pilhas reservas 
  * --------------------------------------------------
+ * @param mover cadeia de Char de tam 2, onde o primeiro char é a pilha de origem e o segundo char é a pilha de destino
+ * @param freecell strutuct do jogo. Contém as pilhas dos jogo.
  * @return 1 se é possível realizar o movimento e 0 caso contrário e -1 caso a string seja
  * inválida
  */
@@ -96,13 +96,30 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
     //Esta parte, resolve a pilha de destino
     //Rever esta parte, pois estou caindo de sono!!
     if ((mover[1] >= 'A') && (mover[1] <= 'H')) {
-        pushCarta(freecell->cartas[tmp[1] - 65]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
+        pushCarta(freecell->cartas[mover[1] - 65], tmp[0], tmp[1]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
     }
     if ((mover[1] >= '0') && (mover[1] <= '3')) {
-        tmp = pop(freecell->naipe[tmp[1]]);
+        pushCarta(freecell->naipe[mover[1]], tmp[0], tmp[1]);
     }
     if ((mover[1] >= 'W') && (mover[1] <= 'Z')) { // Código ASCII da Letra A é  87, descontando 65 dará a pilha correta que devera ser movida a carta
-        tmp = pop(freecell->reserva[tmp[1] - 87]);
+        pushCarta(freecell->reserva[mover[1 - 87]], tmp[0], tmp[1]);
     }
+}
 
+//Faltam criar duas funções, uma para imprirmir o estado atual do jogo e 
+//para processar a entrada.
+
+/**
+ * Imprime estado atual do jogo, o topo das pilhas de cartas.
+ * @param freecell 
+ */
+void imprimePilhas(Freecell freecell) {
+    int i;
+    for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
+        if (!vazia(freecell->cartas[i])) { //verifica se a pilha está vazia
+            printf("%c%c ", freecell->cartas[i]->prim->carta, freecell->cartas[i]->prim->naipe);
+        } else
+            printf("   ");
+        if (i == 7)printf("\n");
+    }
 }
