@@ -57,7 +57,7 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
 
     char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s
     fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
-    while (!feof(fp)) {
+    while (!feof(fp)|| cont<52) {
         pushCarta(freecell->cartas[contPilha], tmp[0], tmp[1]);
         cont++;
         contPilha++;
@@ -106,8 +106,8 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
     }
 }
 
-//Faltam criar duas funções, uma para imprirmir o estado atual do jogo e 
-//para processar a entrada.
+	
+ //Falta fazer uma funçao para processar a entrada.
 
 /**
  * Imprime estado atual do jogo, o topo das pilhas de cartas.
@@ -122,4 +122,4 @@ void imprimePilhas(Freecell freecell) {
             printf("   ");
         if (i == 7)printf("\n");
     }
-}
+    }
