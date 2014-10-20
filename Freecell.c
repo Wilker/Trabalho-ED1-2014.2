@@ -63,7 +63,6 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
         contPilha++;
         if (contPilha == 8) contPilha = 0;
     }
-    fscanf(fp, " %2[^\n]", tmp);
     fclose(fp);
 }
 
@@ -77,7 +76,7 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
  * --------------------------------------------------
  * @param mover cadeia de Char de tam 2, onde o primeiro char é a pilha de origem e o segundo char é a pilha de destino
  * @param freecell strutuct do jogo. Contém as pilhas dos jogo.
- * @return 1 se é possível realizar o movimento e 0 caso contrário e -1 caso a string seja
+ * @return 1 se foi possível realizar o movimento e 0 caso contrário e -1 caso a string seja
  * inválida
  */
 int moveCartaDaPilha(char *mover, Freecell *freecell) {
@@ -123,3 +122,26 @@ void imprimePilhas(Freecell freecell) {
         if (i == 7)printf("\n");
     }
     }
+    
+    
+/**Le um arquivo com os comandos
+* @param arq ponteiro para o arquivo com os comandos
+* @param freecell instancia do jogo sobre qual serao realizados os comandos
+*/        
+void play(File * arq, Freecell freecell){
+    if (!fp) {
+        printf("Erro na abertura do arquivo, tente novamente:");
+        exit(1);
+    }
+  char comando[3];
+ fscanf(fp, " %2[^\n]",comando);
+ while (!feof(fp)) {
+ 	if(comando[0]=='*'){// Se o primeiro caractere do comando for  *  entao sera um comando de impressao do estado atual;
+		imprimePilhas(freecell); 		
+ 	}else{ //caso contrario sera um comando de movimentaçao
+ 		int r = moveCartaDaPilha(comando, freecell);
+ 		if(r==-1) scanf("Sting de comando Invalida");
+ 	fscanf(fp, " %2[^\n]",comando);
+   }
+    fclose(fp);
+}    
