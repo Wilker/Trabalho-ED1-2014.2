@@ -13,12 +13,23 @@
  * 
  */
 int main(int argc, char** argv) {
+	if(argc<2) printf("Passe o arquivo via linha de comando!!");
+	exit(1);
+	
+	//Teste apenas para leitura do arquivo, irei remover na versao final que usara o argumento via linha de comando para passar o caminho do arquivo a ser lido diretamente para a funçao que preenche a pilha de cartas
     FILE* fp = fopen("C:\\Users\\Wilker\\Documents\\NetBeansProjects\\Trabalho-ED1-2014.2\\entrada.txt", "r");
     if (!fp) {
         printf("Erro na abertura do arquivo, tente novamente:");
         exit(1);
     }
     
+    //Cria um ponteiro para uma strutct do jogo alocada dinamicamente
+    Freecell *jogo = (Freecell*) malloc (sizeof(Freecell)); 
+    //Cria a mesa do jogo;
+    criaMesa(jogo);
+    //Distribui a pilha de Cartas inicial com o caminho do arquivo passado via linha de comando 
+    preenchePilhaDeCartas(jogo, argv[1]);
+    //
     /**Menu no jogo
     */
  int escolha=1;
