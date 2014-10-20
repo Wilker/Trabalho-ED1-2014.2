@@ -63,7 +63,8 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
         contPilha++;
         if (contPilha == 8) contPilha = 0;
     }
-    fclose(fp);
+    play(fp,frecell);	//gambiarra para pegar o arquivo ja aberto apontando(eu espero) para a proxima linha onde começam o comandos no arquivo
+     fclose(fp);
 }
 
 /**
