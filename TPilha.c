@@ -26,7 +26,7 @@ void pushCarta(TPilha *p, char naipe, char carta) {
  */
 char* pop(TPilha *p) {
     if (vazia(p))exit(1); 
-    char resp[2];
+    char *resp;
     resp[0]=p->prim->naipe;
     resp[1]=p->prim->carta;
     TNo *q = p->prim;
