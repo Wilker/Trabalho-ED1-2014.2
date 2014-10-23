@@ -16,8 +16,8 @@
 int main(int argc, char** argv) {
     printf("%d\n", argc);
     printf("%s\n", argv[1]);
-    if (argc < 2) printf("Passe o arquivo via linha de comando!!");
-    exit(1);
+    if (argc < 2){ printf("Passe o arquivo via linha de comando!!");
+    exit(1);}
 
     //Teste apenas para leitura do arquivo, irei remover na versao final que usara o argumento via linha de comando para passar o caminho do arquivo a ser lido diretamente para a funçao que preenche a pilha de cartas
     FILE* fp = fopen("C:\\Users\\Wilker\\Documents\\NetBeansProjects\\Trabalho-ED1-2014.2\\entrada.txt", "r");
@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
     //Distribui a pilha de Cartas inicial com o caminho do arquivo passado via linha de comando 
     preenchePilhaDeCartas(jogo, argv[1]);
     free(jogo);
-    system("pause");
+    system("PAUSE");
     return 0;
 }
 //
@@ -121,6 +121,6 @@ while (!feof(fp)) {
     fscanf(fp, " %2[^\n]", tmp);
 }
 fclose(fp);
-system("pause");
+system("PAUSE");
 return (EXIT_SUCCESS);
 }*/
