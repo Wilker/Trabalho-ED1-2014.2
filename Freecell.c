@@ -1,4 +1,5 @@
 #include "TPilha.h"
+#include "Freecell.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +26,7 @@
  * @param naipe
  * @param reserva
  */
-void criaMesa(Freecell *frecell) {
+void criaMesa(Freecell *freecell) {
     int i;
     for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
         freecell->cartas[i] = criaPilhaDeCartas();
@@ -34,7 +35,7 @@ void criaMesa(Freecell *frecell) {
         freecell->naipe[i] = criaPilhaDeCartas();
     }
     for (i = 0; i < TAM_PILHAS_RESERVA; i++) {
-        frecell->reserva[i] = criaPilhaDeCartas();
+        freecell->reserva[i] = criaPilhaDeCartas();
     }
 }
 
@@ -75,7 +76,7 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
  */
 int moveCartaDaPilha(char *mover, Freecell *freecell) {
     if (strlen(mover) < 2) return -1;
-    char tmp[2];
+    char *tmp;
     //Esta parte resolve a pilha de origem
     if ((mover[0] >= 'A') && (mover[0] <= 'H')) {
         tmp = pop(freecell->cartas[mover[0] - 65]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
@@ -106,7 +107,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
  * Imprime estado atual do jogo, o topo das pilhas de cartas.
  * @param freecell 
  */
-void imprimePilhas(Freecell freecell) {
+void imprimePilhas(Freecell *freecell) {
     int i;
     for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
         if (!vazia(freecell->cartas[i])) { //verifica se a pilha está vazia
@@ -121,14 +122,14 @@ void imprimePilhas(Freecell freecell) {
  * @param arq ponteiro para o arquivo com os comandos
  * @param freecell instancia do jogo sobre qual serao realizados os comandos
  */
-void play(FILE *arq, Freecell freecell) {
+void play(FILE *arq, Freecell *freecell) {
     if (!arq) {
         printf("Erro na abertura do arquivo, tente novamente:");
         exit(1);
     }
     char comando[3];
     fscanf(arq, " %2[^\n]", comando);
-    while (!feof(fp)) {
+    while (!feof(arq)) {
         if (comando[0] == '*') {// Se o primeiro caractere do comando for  *  entao sera um comando de impressao do estado atual;
             imprimePilhas(freecell);
         } else { //caso contrario sera um comando de movimentaçao
