@@ -7,6 +7,13 @@
 
 #ifndef FREECELL_H
 #define	FREECELL_H
+typedef struct freecell {
+    // 
+    // Mover para o arquivo.h
+    TPilha **cartas; // Pilhas de A a H
+    TPilha **naipe; // Pilhas de 0 a 3
+    TPilha **reserva; // Pilhas de W a Z
+} Freecell;
 
 void criaMesa (TPilha **cartas, TPilha **naipe, TPilha **reserva);
 void preenchePilhas(TPilha *pilha, char* caminho);

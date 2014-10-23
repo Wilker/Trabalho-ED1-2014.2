@@ -6,13 +6,6 @@
 #define TAM_PILHAS_NAIPE 4
 #define TAM_PILHAS_RESERVA 4
 
-typedef struct freecell {
-    // 
-    // Mover para o arquivo.h
-    TPilha **cartas; // Pilhas de A a H
-    TPilha **naipe; // Pilhas de 0 a 3
-    TPilha **reserva; // Pilhas de W a Z
-} Freecell;
 
 /* Os naipes estão separados da seguinte forma '0' = copas, '1' = paus, '2' = ouro, '3' = espada
  * As cartas estão separadas da seguinte forma ('A' = às, 'B' = 2, 'C' = 3, ..., 'J' = 10, 'K'
@@ -57,14 +50,14 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
 
     char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s
     fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
-    while (!feof(fp)|| cont<52) {
+    while (!feof(fp) || cont < 52) {
         pushCarta(freecell->cartas[contPilha], tmp[0], tmp[1]);
         cont++;
         contPilha++;
         if (contPilha == 8) contPilha = 0;
     }
-    play(fp,frecell);	//gambiarra para pegar o arquivo ja aberto apontando(eu espero) para a proxima linha onde começam o comandos no arquivo
-     fclose(fp);
+    play(fp, freecell); //gambiarra para pegar o arquivo ja aberto apontando(eu espero) para a proxima linha onde começam o comandos no arquivo
+    fclose(fp);
 }
 
 /**
@@ -106,8 +99,8 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
     }
 }
 
-	
- //Falta fazer uma funçao para processar a entrada.
+
+//Falta fazer uma funçao para processar a entrada.
 
 /**
  * Imprime estado atual do jogo, o topo das pilhas de cartas.
@@ -122,27 +115,27 @@ void imprimePilhas(Freecell freecell) {
             printf("   ");
         if (i == 7)printf("\n");
     }
-    }
-    
-    
+}
+
 /**Le um arquivo com os comandos
-* @param arq ponteiro para o arquivo com os comandos
-* @param freecell instancia do jogo sobre qual serao realizados os comandos
-*/        
-void play(File * arq, Freecell freecell){
-    if (!fp) {
+ * @param arq ponteiro para o arquivo com os comandos
+ * @param freecell instancia do jogo sobre qual serao realizados os comandos
+ */
+void play(FILE *arq, Freecell freecell) {
+    if (!arq) {
         printf("Erro na abertura do arquivo, tente novamente:");
         exit(1);
     }
-  char comando[3];
- fscanf(fp, " %2[^\n]",comando);
- while (!feof(fp)) {
- 	if(comando[0]=='*'){// Se o primeiro caractere do comando for  *  entao sera um comando de impressao do estado atual;
-		imprimePilhas(freecell); 		
- 	}else{ //caso contrario sera um comando de movimentaçao
- 		int r = moveCartaDaPilha(comando, freecell);
- 		if(r==-1) scanf("Sting de comando Invalida");
- 	fscanf(fp, " %2[^\n]",comando);
-   }
-    fclose(fp);
-}    
+    char comando[3];
+    fscanf(arq, " %2[^\n]", comando);
+    while (!feof(fp)) {
+        if (comando[0] == '*') {// Se o primeiro caractere do comando for  *  entao sera um comando de impressao do estado atual;
+            imprimePilhas(freecell);
+        } else { //caso contrario sera um comando de movimentaçao
+            int r = moveCartaDaPilha(comando, freecell);
+            if (r == -1) scanf("Sting de comando Invalida");
+            fscanf(arq, " %2[^\n]", comando);
+        }
+        fclose(arq);
+    }
+}
