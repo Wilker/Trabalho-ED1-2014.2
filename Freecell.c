@@ -26,6 +26,9 @@
  * @param naipe
  * @param reserva
  */
+ 
+
+
 void criaMesa(Freecell *freecell) {
     int i;
     for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
@@ -39,27 +42,7 @@ void criaMesa(Freecell *freecell) {
     }
 }
 
-void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
-    // O lance aqui é fazer um contador de 1 a 52, enqt cont <52 ele distrubui as cartas
-    int cont = 1; //contador para a quantidade de cartas que será lida do arquivo
-    int contPilha = 0; // contador para saber em qual pilha será inserida a carta
-    FILE* fp = fopen(caminho, "r"); //abre o arquivo para leitura
-    if (!fp) {
-        printf("Erro na abertura do arquivo, tente novamente:");
-        exit(1);
-    }
 
-    char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s
-    fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
-    while (!feof(fp) || cont < 52) {
-        pushCarta(freecell->cartas[contPilha], tmp[0], tmp[1]);
-        cont++;
-        contPilha++;
-        if (contPilha == 8) contPilha = 0;
-    }
-    play(fp, freecell); //gambiarra para pegar o arquivo ja aberto apontando(eu espero) para a proxima linha onde começam o comandos no arquivo
-    fclose(fp);
-}
 
 /**
  * Recebe uma String de movimentação com 2 caracteres, o primeiro é a pilha de origem
@@ -100,25 +83,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
     }
 }
 
-
-//Falta fazer uma funçao para processar a entrada.
-
-/**
- * Imprime estado atual do jogo, o topo das pilhas de cartas.
- * @param freecell 
- */
-void imprimePilhas(Freecell *freecell) {
-    int i;
-    for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
-        if (!vazia(freecell->cartas[i])) { //verifica se a pilha está vazia
-            printf("%c%c ", freecell->cartas[i]->prim->carta, freecell->cartas[i]->prim->naipe);
-        } else
-            printf("   ");
-        if (i == 7)printf("\n");
-    }
-}
-
-/**Le um arquivo com os comandos
+ /**Le um arquivo com os comandos
  * @param arq ponteiro para o arquivo com os comandos
  * @param freecell instancia do jogo sobre qual serao realizados os comandos
  */
@@ -140,3 +105,42 @@ void play(FILE *arq, Freecell *freecell) {
         fclose(arq);
     }
 }
+
+void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
+    // O lance aqui é fazer um contador de 1 a 52, enqt cont <52 ele distrubui as cartas
+    int cont = 1; //contador para a quantidade de cartas que será lida do arquivo
+    int contPilha = 0; // contador para saber em qual pilha será inserida a carta
+    FILE* fp = fopen(caminho, "r"); //abre o arquivo para leitura
+    if (!fp) {
+        printf("Erro na abertura do arquivo, tente novamente:");
+        exit(1);
+    }
+
+    char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s
+    fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
+    while (!feof(fp) || cont < 52) {
+        pushCarta(freecell->cartas[contPilha], tmp[0], tmp[1]);
+        cont++;
+        contPilha++;
+        if (contPilha == 8) contPilha = 0;
+    }
+    play(fp, freecell); //gambiarra para pegar o arquivo ja aberto apontando(eu espero) para a proxima linha onde começam o comandos no arquivo
+    fclose(fp);
+}
+//Falta fazer uma funçao para processar a entrada.
+
+/**
+ * Imprime estado atual do jogo, o topo das pilhas de cartas.
+ * @param freecell 
+ */
+void imprimePilhas(Freecell *freecell) {
+    int i;
+    for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
+        if (!vazia(freecell->cartas[i])) { //verifica se a pilha está vazia
+            printf("%c%c ", freecell->cartas[i]->prim->carta, freecell->cartas[i]->prim->naipe);
+        } else
+            printf("   ");
+        if (i == 7)printf("\n");
+    }
+}
+
