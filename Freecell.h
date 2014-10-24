@@ -15,6 +15,7 @@ typedef struct freecell {
     TPilha **reserva; // Pilhas de W a Z
 } Freecell;
 
+void inicializaFreecell(Freecell *freecell);
 void criaMesa (Freecell *freecell);
 void preenchePilhaDeCartas(Freecell *freecell, char* caminho);
 void imprimePilhas(Freecell *freecell);
