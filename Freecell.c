@@ -144,3 +144,8 @@ void imprimePilhas(Freecell *freecell) {
     }
 }
 
+void inicializaFreecell(Freecell *freecell){
+	freecell->*cartas= (*cartas) malloc(sizeof(*cartas)*TAM_PILHAS_CARTAS));
+	freecell->*naipes=(*naipes)malloc(sizeof(*naipes)*TAM_PILHAS_NAIPES));
+	freecell->*hy reserva=(*reserva)mallooc(sizeof(*naipes)*TAM_PILHAS_RESERVAS));
+	}
