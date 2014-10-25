@@ -26,7 +26,7 @@
  * @param naipe
  * @param reserva
  */
- 
+
 
 
 void criaMesa(Freecell *freecell) {
@@ -41,8 +41,6 @@ void criaMesa(Freecell *freecell) {
         freecell->reserva[i] = criaPilhaDeCartas();
     }
 }
-
-
 
 /**
  * Recebe uma String de movimentação com 2 caracteres, o primeiro é a pilha de origem
@@ -83,7 +81,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
     }
 }
 
- /**Le um arquivo com os comandos
+/**Le um arquivo com os comandos
  * @param arq ponteiro para o arquivo com os comandos
  * @param freecell instancia do jogo sobre qual serao realizados os comandos
  */
@@ -144,8 +142,39 @@ void imprimePilhas(Freecell *freecell) {
     }
 }
 
-void inicializaFreecell(Freecell *freecell){
-	freecell->*cartas= (*cartas) malloc(sizeof(*cartas)*TAM_PILHAS_CARTAS));
-	freecell->*naipes=(*naipes)malloc(sizeof(*naipes)*TAM_PILHAS_NAIPES));
-	freecell->*hy reserva=(*reserva)mallooc(sizeof(*naipes)*TAM_PILHAS_RESERVAS));
-	}
+/**
+ * Inicializa todos os vetores com NULL;
+ * @param freecell
+ */
+Freecell* inicializaFreecell(void) {
+    int i;
+    Freecell* freecell = (Freecell*) malloc(sizeof (Freecell));
+    //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de cartas
+    freecell->cartas = (TPilha**) malloc(TAM_PILHAS_CARTAS * sizeof (TPilha**));
+    if (freecell->cartas != NULL) {
+        for (i = 0; i < TAM_PILHAS_CARTAS; i++)
+            freecell->cartas[i] = NULL;
+    } else {
+        printf("Erro na alocação do vetor freecell->cartas");
+        exit(10);
+    }
+    //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de naipe
+    freecell->naipe = (TPilha**) malloc(TAM_PILHAS_NAIPE * sizeof (TPilha**));
+    if (freecell->naipe != NULL) {
+        for (i = 0; i < TAM_PILHAS_NAIPE; i++)
+            freecell->naipe[i] = NULL;
+    } else {
+        printf("Erro na alocação do vetor freecell->naipe");
+        exit(11);
+    }
+    //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de reserva
+    freecell->reserva = (TPilha**) malloc(TAM_PILHAS_RESERVA * sizeof (TPilha**));
+    if (freecell->reserva != NULL) {
+        for (i = 0; i < TAM_PILHAS_RESERVA; i++)
+            freecell->reserva[i] = NULL;
+    } else {
+        printf("Erro na alocação do vetor freecell->reserva");
+        exit(12);
+    }
+    return freecell;
+}
