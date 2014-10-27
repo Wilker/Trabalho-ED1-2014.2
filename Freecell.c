@@ -150,7 +150,7 @@ Freecell* inicializaFreecell(void) {
     int i;
     Freecell* freecell = (Freecell*) malloc(sizeof (Freecell));
     //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de cartas
-    freecell->cartas = (TPilha**) malloc(TAM_PILHAS_CARTAS * sizeof (TPilha**));
+    freecell->cartas = (TPilha**) malloc(TAM_PILHAS_CARTAS * sizeof (TPilha*));
     if (freecell->cartas != NULL) {
         for (i = 0; i < TAM_PILHAS_CARTAS; i++)
             freecell->cartas[i] = NULL;
@@ -159,7 +159,7 @@ Freecell* inicializaFreecell(void) {
         exit(10);
     }
     //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de naipe
-    freecell->naipe = (TPilha**) malloc(TAM_PILHAS_NAIPE * sizeof (TPilha**));
+    freecell->naipe = (TPilha**) malloc(TAM_PILHAS_NAIPE * sizeof (TPilha*));
     if (freecell->naipe != NULL) {
         for (i = 0; i < TAM_PILHAS_NAIPE; i++)
             freecell->naipe[i] = NULL;
@@ -168,7 +168,7 @@ Freecell* inicializaFreecell(void) {
         exit(11);
     }
     //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de reserva
-    freecell->reserva = (TPilha**) malloc(TAM_PILHAS_RESERVA * sizeof (TPilha**));
+    freecell->reserva = (TPilha**) malloc(TAM_PILHAS_RESERVA * sizeof (TPilha*));
     if (freecell->reserva != NULL) {
         for (i = 0; i < TAM_PILHAS_RESERVA; i++)
             freecell->reserva[i] = NULL;
