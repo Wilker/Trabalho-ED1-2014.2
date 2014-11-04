@@ -25,10 +25,11 @@ void pushCarta(TPilha *p, char naipe, char carta) {
  * @return String de tam 2, onde primeiro char é o naipe e o segundo a carta
  */
 char* pop(TPilha *p) {
-    if (vazia(p))exit(1); 
-    char *resp;
+    if (vazia(p)){printf("A Pilha esta vazia! \n");exit(99); }
+    char *resp = (char) malloc(3*sizeof(char));
     resp[0]=p->prim->naipe;
     resp[1]=p->prim->carta;
+    resp[3]='\0';
     TNo *q = p->prim;
     p->prim = p->prim->prox;
     free(q);
