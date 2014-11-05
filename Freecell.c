@@ -57,7 +57,7 @@ void criaMesa(Freecell *freecell) {
  */
 int moveCartaDaPilha(char *mover, Freecell *freecell) {
     if (strlen(mover) < 2) return -1;
-    char *tmp;
+    char *tmp = (char *) malloc(3 * sizeof (char));
     //Esta parte resolve a pilha de origem
     if ((mover[0] >= 'A') && (mover[0] <= 'H')) {
         tmp = pop(freecell->cartas[mover[0] - 65]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
@@ -81,11 +81,28 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
     }
 }
 
+/**
+ * Imprime estado atual do jogo, o topo das pilhas de cartas.
+ * @param freecell 
+ */
+void imprimePilhas(Freecell *freecell) {
+    int i;
+    for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
+        if (!vazia(freecell->cartas[i])) { //verifica se a pilha está vazia
+            printf("%c%c ", freecell->cartas[i]->prim->naipe, freecell->cartas[i]->prim->carta);
+        } else
+            printf(" Pilha Vazia  ");
+        if (i == 7)printf("\n");
+    }
+}
+
 /**Le um arquivo com os comandos
  * @param arq ponteiro para o arquivo com os comandos
  * @param freecell instancia do jogo sobre qual serao realizados os comandos
  */
 void play(FILE *arq, Freecell *freecell) {
+    //Teste apenas para ver se todas as pilhas estão com cartas.
+    imprimePilhas(freecell);
     if (!arq) {
         printf("Erro na abertura do arquivo, tente novamente:");
         exit(1);
@@ -106,7 +123,7 @@ void play(FILE *arq, Freecell *freecell) {
 
 void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
     // O lance aqui é fazer um contador de 1 a 52, enqt cont <52 ele distrubui as cartas
-    int cont = 1; //contador para a quantidade de cartas que será lida do arquivo
+    int cont = 0; //contador para a quantidade de cartas que será lida do arquivo
     int contPilha = 0; // contador para saber em qual pilha será inserida a carta
     FILE* fp = fopen(caminho, "r"); //abre o arquivo para leitura
     if (!fp) {
@@ -114,32 +131,17 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
         exit(1);
     }
 
-    char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s
+    char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s EDIT: AGORA LEMBREI QUE TEM Q TER O CARACTERE '\0' INDICANDO FIM DA LINHA
     fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
-    while (!feof(fp) || cont < 52) {
+    while (!feof(fp) && cont < 52) {
         pushCarta(freecell->cartas[contPilha], tmp[0], tmp[1]);
         cont++;
         contPilha++;
         if (contPilha == 8) contPilha = 0;
+        fscanf(fp, " %2[^\n]", tmp);
     }
     play(fp, freecell); //gambiarra para pegar o arquivo ja aberto apontando(eu espero) para a proxima linha onde começam o comandos no arquivo
     fclose(fp);
-}
-//Falta fazer uma funçao para processar a entrada.
-
-/**
- * Imprime estado atual do jogo, o topo das pilhas de cartas.
- * @param freecell 
- */
-void imprimePilhas(Freecell *freecell) {
-    int i;
-    for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
-        if (!vazia(freecell->cartas[i])) { //verifica se a pilha está vazia
-            printf("%c%c ", freecell->cartas[i]->prim->carta, freecell->cartas[i]->prim->naipe);
-        } else
-            printf("   ");
-        if (i == 7)printf("\n");
-    }
 }
 
 /**
@@ -149,11 +151,13 @@ void imprimePilhas(Freecell *freecell) {
 Freecell* inicializaFreecell(void) {
     int i;
     Freecell* freecell = (Freecell*) malloc(sizeof (Freecell));
-    //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de cartas
+    //Aloca espaço TAM_PILAS_CARTAS ponteiros de pilhas de cartas
     freecell->cartas = (TPilha**) malloc(TAM_PILHAS_CARTAS * sizeof (TPilha*));
     if (freecell->cartas != NULL) {
-        for (i = 0; i < TAM_PILHAS_CARTAS; i++)
+        for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
             freecell->cartas[i] = NULL;
+            printf("%p\n", &freecell->cartas[i]); //Imprime na tela os endereços  dos ponteiros Cartas
+        }printf("\n"); 
     } else {
         printf("Erro na alocação do vetor freecell->cartas");
         exit(10);
@@ -161,17 +165,22 @@ Freecell* inicializaFreecell(void) {
     //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de naipe
     freecell->naipe = (TPilha**) malloc(TAM_PILHAS_NAIPE * sizeof (TPilha*));
     if (freecell->naipe != NULL) {
-        for (i = 0; i < TAM_PILHAS_NAIPE; i++)
+        for (i = 0; i < TAM_PILHAS_NAIPE; i++) {
             freecell->naipe[i] = NULL;
+            printf("%p\n", &freecell->naipe[i]);
+        }
+        printf("\n"); 
     } else {
         printf("Erro na alocação do vetor freecell->naipe");
         exit(11);
     }
-    //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de reserva
+    //Aloca espaço TAM_PILAS_RESERVA ponteiros de pilhas de reserva
     freecell->reserva = (TPilha**) malloc(TAM_PILHAS_RESERVA * sizeof (TPilha*));
     if (freecell->reserva != NULL) {
-        for (i = 0; i < TAM_PILHAS_RESERVA; i++)
+        for (i = 0; i < TAM_PILHAS_RESERVA; i++) {
             freecell->reserva[i] = NULL;
+            printf("%p\n", &freecell->reserva[i]);
+        }printf("\n"); 
     } else {
         printf("Erro na alocação do vetor freecell->reserva");
         exit(12);
