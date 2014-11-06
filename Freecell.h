@@ -8,9 +8,9 @@
 #ifndef FREECELL_H
 #define	FREECELL_H
 typedef struct freecell {
-    TPilha **naipe; // Pilhas de 0 a 3
-    TPilha **cartas; // Pilhas de A a H
-    TPilha **reserva; // Pilhas de W a Z
+    TPilha **PNaipe; // Pilhas de 0 a 3
+    TPilha **PCartas; // Pilhas de A a H
+    TPilha **PReserva; // Pilhas de W a Z
 }Freecell;
 
 Freecell* inicializaFreecell();
