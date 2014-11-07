@@ -29,18 +29,7 @@
 
 
 
-void criaMesa(Freecell *freecell) {
-    int i;
-    for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
-        freecell->cartas[i] = criaPilhaDeCartas();
-    }
-    for (i = 0; i < TAM_PILHAS_NAIPE; i++) {
-        freecell->naipe[i] = criaPilhaDeCartas();
-    }
-    for (i = 0; i < TAM_PILHAS_RESERVA; i++) {
-        freecell->reserva[i] = criaPilhaDeCartas();
-    }
-}
+
 
 /**
  * Recebe uma String de movimentação com 2 caracteres, o primeiro é a pilha de origem
@@ -52,32 +41,86 @@ void criaMesa(Freecell *freecell) {
  * --------------------------------------------------
  * @param mover cadeia de Char de tam 2, onde o primeiro char é a pilha de origem e o segundo char é a pilha de destino
  * @param freecell strutuct do jogo. Contém as pilhas dos jogo.
- * @return 1 se foi possível realizar o movimento e 0 caso contrário e -1 caso a string seja
+ * @return 1 se foi possível realizar o movimento, 0 caso contrário e -1 caso a string seja
  * inválida
  */
 int moveCartaDaPilha(char *mover, Freecell *freecell) {
     if (strlen(mover) < 2) return -1;
     char *tmp = (char *) malloc(3 * sizeof (char));
+
     //Esta parte resolve a pilha de origem
-    if ((mover[0] >= 'A') && (mover[0] <= 'H')) {
-        tmp = pop(freecell->cartas[mover[0] - 65]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
+    if ((mover[0] >= 'A') && (mover[0] <= 'H')) { //Se estiver neste intervalo é a pilha de Cartas
+        //Se não estiver vazia, realiza o pop!
+        if (!vazia(freecell->pCartas[mover[0] - 65]))
+            tmp = pop(freecell->pCartas[mover[0] - 65]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
     }
-    if ((mover[0] >= '0') && (mover[0] <= '3')) {
-        tmp = pop(freecell->naipe[mover[0]]);
+    if ((mover[0] >= '0') && (mover[0] <= '3')) { //Se estiver neste intervalo é a pilha de naipe
+        //Se não tiver vazia realiza o pop!
+        if (!vazia(freecell->pNaipe[mover[0]]))
+            tmp = pop(freecell->pNaipe[mover[0]]);
     }
-    if ((mover[0] >= 'W') && (mover[0] <= 'Z')) { // Código ASCII da Letra A é  87, descontando 65 dará a pilha correta que devera ser movida a carta
-        tmp = pop(freecell->reserva[mover[0] - 87]);
+    if ((mover[0] >= 'W') && (mover[0] <= 'Z')) { //Se estiver neste intervalo é a pilha de naipe
+        //Se não tiver vazia realiza o pop!
+        if (!vazia(freecell->pReserva[mover[0] - 87]))
+            tmp = pop(freecell->pReserva[mover[0] - 87]); // Código ASCII da Letra W é  87, descontando 65 dará a pilha correta que devera ser movida a carta
     }
+
     //Esta parte, resolve a pilha de destino
-    //Rever esta parte, pois estou caindo de sono!!
     if ((mover[1] >= 'A') && (mover[1] <= 'H')) {
-        pushCarta(freecell->cartas[mover[1] - 65], tmp[0], tmp[1]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
+        /*Significa que a pilha de destino é alguma das pilhas de cartas
+         1º Verificar se a carta que está no topo permite a movimentação. Pela seguinte regra:
+        A inserção de cartas nas pilhas A, ..., H deve respeitar a ordem
+        decrescente e ainda duas cartas adjacentes não devem ter a mesma cor:
+        preta (paus e espada) e vermelha (ouro e copas). Como exemplo, a
+        seguinte ordem de cartas é aceita: Rei de paus (K), Dama de ouro (Q),
+        Valete de espada (J), 10 de ouro, 9 de espada, 8 de copas. Assim a última
+        carta colocada na pilha é 8 de copas. Se a pilha estiver vazia, qualquer
+        carta é aceita;
+         */
+        //tmp[0] => naipe // tmp[1]=> carta
+        if ((vazia(freecell->pCartas[tmp[0]])) || //verifica se pilha está vazia
+                ((tmp[0] == '0' || tmp[0] == '2') && // Verifica se o naipe é de cor diferente
+                (freecell->pCartas[mover[1] - 65]->prim->naipe == '1') || (freecell->pCartas[mover[1] - 65]->prim->naipe == '3')) ||
+                ((tmp[0] == '1' || tmp[0] == '3')) &&
+                (freecell->pCartas[mover[1] - 65]->prim->naipe == '0') || (freecell->pCartas[mover[1] - 65]->prim->naipe == '1') || // Fim da verificação da cor do naipe
+                (tmp[1] < freecell->pCartas[mover[1] - 65]->prim->carta))//vefica se está em ordem decrescente
+        {
+            pushCarta(freecell->pCartas[mover[1] - 65], tmp[0], tmp[1]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
+            return 1;
+        } else return 0;
     }
+
+
     if ((mover[1] >= '0') && (mover[1] <= '3')) {
-        pushCarta(freecell->naipe[mover[1]], tmp[0], tmp[1]);
+        /*Significa que a pilha de destino é uma das pilhas agrupadas pelo naipe e a regra para inserçao é:
+         *  Em cada uma das pilhas 0, ..., 3 deve haver apenas cartas de mesmo
+            naipe e em ordem crescente: por exemplo, na pilha 0, primeiro deve-se
+            colocar um ás de copas, depois, sobre o ás de copas, deve-se colocar um
+            2 de copas, e assim por diante;
+         */
+        //tmp[0] => naipe // tmp[1]=> carta
+        if (vazia(freecell->pNaipe[mover[1]-48]) && (tmp[1] == 'A')) {// se estiver vazia e a carta for um AS, insere
+            pushCarta(freecell->pNaipe[mover[1]], tmp[0], tmp[1]);
+            return 1;
+        }
+        if (!vazia(freecell->pNaipe[mover[1]-48]) && (tmp[1] == freecell->pNaipe[mover[1]]->prim->carta - 1) && (tmp[0] == freecell->pNaipe[mover[1]]->prim->naipe)) { //se a pilha não estiver vazia e carta for maior que a do topo da pilha por 1 unidade e do memso naipe, insere
+            pushCarta(freecell->pNaipe[mover[1]], tmp[0], tmp[1]);
+            return 1;
+        }
+        return 0;
     }
-    if ((mover[1] >= 'W') && (mover[1] <= 'Z')) { // Código ASCII da Letra A é  87, descontando 65 dará a pilha correta que devera ser movida a carta
-        pushCarta(freecell->reserva[mover[1 - 87]], tmp[0], tmp[1]);
+
+
+
+    if ((mover[1] >= 'W') && (mover[1] <= 'Z')) { // Código ASCII da Letra W é  87, descontando 87 dará a pilha correta que devera ser movida a carta
+        /*Esta parte significa que a pilha de destino é a reserva. Regra: 
+        Cada espaço W, ..., Z pode armazenar no máximo uma carta;
+         */
+        if (vazia(freecell->pReserva[mover[1 - 87]])) {
+            pushCarta(freecell->pReserva[mover[1 - 87]], tmp[0], tmp[1]);
+            return 1;
+        }
+        return 0;
     }
 }
 
@@ -88,8 +131,8 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
 void imprimePilhas(Freecell *freecell) {
     int i;
     for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
-        if (!vazia(freecell->cartas[i])) { //verifica se a pilha está vazia
-            printf("%c%c ", freecell->cartas[i]->prim->naipe, freecell->cartas[i]->prim->carta);
+        if (!vazia(freecell->pCartas[i])) { //verifica se a pilha está vazia
+            printf("%c%c ", freecell->pCartas[i]->prim->naipe, freecell->pCartas[i]->prim->carta);
         } else
             printf(" Pilha Vazia  ");
         if (i == 7)printf("\n");
@@ -108,17 +151,19 @@ void play(FILE *arq, Freecell *freecell) {
         exit(1);
     }
     char comando[3];
-    fscanf(arq, " %2[^\n]", comando);
+
     while (!feof(arq)) {
+
+        fscanf(arq, " %2[^\n]", comando);
         if (comando[0] == '*') {// Se o primeiro caractere do comando for  *  entao sera um comando de impressao do estado atual;
             imprimePilhas(freecell);
         } else { //caso contrario sera um comando de movimentaçao
             int r = moveCartaDaPilha(comando, freecell);
             if (r == -1) scanf("Sting de comando Invalida");
-            fscanf(arq, " %2[^\n]", comando);
+
         }
-        fclose(arq);
     }
+    fclose(arq);
 }
 
 void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
@@ -132,13 +177,13 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
     }
 
     char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s EDIT: AGORA LEMBREI QUE TEM Q TER O CARACTERE '\0' INDICANDO FIM DA LINHA
-    fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
     while (!feof(fp) && cont < 52) {
-        pushCarta(freecell->cartas[contPilha], tmp[0], tmp[1]);
+        fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
+        pushCarta(freecell->pCartas[contPilha], tmp[0], tmp[1]);
         cont++;
         contPilha++;
         if (contPilha == 8) contPilha = 0;
-        fscanf(fp, " %2[^\n]", tmp);
+        //  fscanf(fp, " %2[^\n]", tmp);
     }
     play(fp, freecell); //gambiarra para pegar o arquivo ja aberto apontando(eu espero) para a proxima linha onde começam o comandos no arquivo
     fclose(fp);
@@ -152,35 +197,37 @@ Freecell* inicializaFreecell(void) {
     int i;
     Freecell* freecell = (Freecell*) malloc(sizeof (Freecell));
     //Aloca espaço TAM_PILAS_CARTAS ponteiros de pilhas de cartas
-    freecell->cartas = (TPilha**) malloc(TAM_PILHAS_CARTAS * sizeof (TPilha*));
-    if (freecell->cartas != NULL) {
+    freecell->pCartas = (TPilha**) malloc(TAM_PILHAS_CARTAS * sizeof (TPilha*));
+    if (freecell->pCartas != NULL) {
         for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
-            freecell->cartas[i] = NULL;
-            printf("%p\n", &freecell->cartas[i]); //Imprime na tela os endereços  dos ponteiros Cartas
-        }printf("\n"); 
+            freecell->pCartas[i] = criaPilhaDeCartas();
+            printf("%p\n", &freecell->pCartas[i]); //Imprime na tela os endereços  dos ponteiros Cartas
+        }
+        printf("\n");
     } else {
         printf("Erro na alocação do vetor freecell->cartas");
         exit(10);
     }
     //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de naipe
-    freecell->naipe = (TPilha**) malloc(TAM_PILHAS_NAIPE * sizeof (TPilha*));
-    if (freecell->naipe != NULL) {
+    freecell->pNaipe = (TPilha**) malloc(TAM_PILHAS_NAIPE * sizeof (TPilha*));
+    if (freecell->pNaipe != NULL) {
         for (i = 0; i < TAM_PILHAS_NAIPE; i++) {
-            freecell->naipe[i] = NULL;
-            printf("%p\n", &freecell->naipe[i]);
+            freecell->pNaipe[i] = NULL;
+            printf("%p\n", &freecell->pNaipe[i]);
         }
-        printf("\n"); 
+        printf("\n");
     } else {
         printf("Erro na alocação do vetor freecell->naipe");
         exit(11);
     }
     //Aloca espaço TAM_PILAS_RESERVA ponteiros de pilhas de reserva
-    freecell->reserva = (TPilha**) malloc(TAM_PILHAS_RESERVA * sizeof (TPilha*));
-    if (freecell->reserva != NULL) {
+    freecell->pReserva = (TPilha**) malloc(TAM_PILHAS_RESERVA * sizeof (TPilha*));
+    if (freecell->pReserva != NULL) {
         for (i = 0; i < TAM_PILHAS_RESERVA; i++) {
-            freecell->reserva[i] = NULL;
-            printf("%p\n", &freecell->reserva[i]);
-        }printf("\n"); 
+            freecell->pReserva[i] = criaPilhaDeCartas();
+            printf("%p\n", &freecell->pReserva[i]);
+        }
+        printf("\n");
     } else {
         printf("Erro na alocação do vetor freecell->reserva");
         exit(12);
