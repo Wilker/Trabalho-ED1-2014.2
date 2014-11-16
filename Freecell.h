@@ -4,7 +4,7 @@
  *
  * Created on 16 de Outubro de 2014, 20:49
  */
-
+#include <stdio.h>
 #ifndef FREECELL_H
 #define	FREECELL_H
 typedef struct freecell {
@@ -14,8 +14,8 @@ typedef struct freecell {
 }Freecell;
 
 Freecell* inicializaFreecell();
-void criaMesa (Freecell *freecell);
 void preenchePilhaDeCartas(Freecell *freecell, char* caminho);
 void imprimePilhas(Freecell *freecell);
+void play(FILE *fp, Freecell *freecell);
 
 #endif	/* FREECELL_H */
