@@ -30,7 +30,7 @@ char* pop(TPilha *p) {
     char *resp = (char*) malloc(3*sizeof(char));
     resp[0]=p->prim->naipe;
     resp[1]=p->prim->carta;
-    resp[3]='\0';
+    resp[2]='\0';
     TNo *q = p->prim;
     p->prim = p->prim->prox;
     free(q);
