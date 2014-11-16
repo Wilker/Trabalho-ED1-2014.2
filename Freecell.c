@@ -53,15 +53,15 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
             tmp = pop(freecell->pCartas[mover[0] - 65]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
             posOrigem = mover[0] - 65;
             pilhaOrigem = 'c';
-        }
+        }else tmp[0]=NULL;
     }
     if ((mover[0] >= '0') && (mover[0] <= '3')) { //Se estiver neste intervalo é a pilha de naipe
         //Se não tiver vazia realiza o pop!
-        if (!vazia(freecell->pNaipe[mover[0]])) {
-            tmp = pop(freecell->pNaipe[mover[0]]);
+        if (!vazia(freecell->pNaipe[mover[0]-48])) {
+            tmp = pop(freecell->pNaipe[mover[0]-48]);
             posOrigem = mover[0] - 48;
             pilhaOrigem = 'n';
-        }
+        }else tmp[0]=NULL;
     }
     if ((mover[0] >= 'W') && (mover[0] <= 'Z')) { //Se estiver neste intervalo é a pilha de naipe
         //Se não tiver vazia realiza o pop!
@@ -69,7 +69,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
             tmp = pop(freecell->pReserva[mover[0] - 87]); // Código ASCII da Letra W é  87, descontando 65 dará a pilha correta que devera ser movida a carta
             posOrigem = mover[0] - 87;
             pilhaOrigem = 'r';
-        }
+        }else tmp[0]=NULL;
     }
 
     //Esta parte, resolve a pilha de destino
@@ -85,12 +85,13 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
         carta é aceita;
          */
         //tmp[0] => naipe // tmp[1]=> carta
-        if ((vazia(freecell->pCartas[tmp[0]])) || //verifica se pilha está vazia
+        if(tmp[0]==NULL)return 0;
+        if ((vazia(freecell->pCartas[mover[1]-65])) || //verifica se pilha de destino está vazia
                 ((tmp[0] == '0' || tmp[0] == '2') && // Verifica se o naipe é de cor diferente
                 (freecell->pCartas[mover[1] - 65]->prim->naipe == '1') || (freecell->pCartas[mover[1] - 65]->prim->naipe == '3')) ||
                 ((tmp[0] == '1' || tmp[0] == '3')) &&
                 (freecell->pCartas[mover[1] - 65]->prim->naipe == '0') || (freecell->pCartas[mover[1] - 65]->prim->naipe == '1') || // Fim da verificação da cor do naipe
-                (tmp[1] < freecell->pCartas[mover[1] - 65]->prim->carta))//vefica se está em ordem decrescente
+                (tmp[1]-1 == freecell->pCartas[mover[1] - 65]->prim->carta))//vefica se está em ordem decrescente
         {
             pushCarta(freecell->pCartas[mover[1] - 65], tmp[0], tmp[1]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
             return 1;
@@ -114,15 +115,15 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
             2 de copas, e assim por diante;
          */
         //tmp[0] => naipe // tmp[1]=> carta
+         if(tmp[0]==NULL)return 0;
         if (vazia(freecell->pNaipe[mover[1] - 48]) && (tmp[1] == 'A')) {// se estiver vazia e a carta for um AS, insere
             pushCarta(freecell->pNaipe[mover[1] - 48], tmp[0], tmp[1]);
             return 1;
         } else
-            if (!vazia(freecell->pNaipe[mover[1] - 48])) {//Quebrar esse if em vários para ver qual está causando o bug!
-            printf("%c", freecell->pNaipe[mover[1] - 48]->prim->carta);
-            if (tmp[1] == freecell->pNaipe[mover[1] - 48]->prim->carta - 1)
-                if (tmp[0] == freecell->pNaipe[mover[1] - 48]->prim->naipe) { //se a pilha não estiver vazia e carta for maior que a do topo da pilha por 1 unidade e do memso naipe, insere
-                    pushCarta(freecell->pNaipe[mover[1] - 48], tmp[0], tmp[1]);
+            if (!vazia(freecell->pNaipe[mover[1] - 48])) {//verifica se está vazia
+            if (tmp[1] == freecell->pNaipe[mover[1] - 48]->prim->carta - 1)//se a carta for maior por uma unidade
+                if (tmp[0] == freecell->pNaipe[mover[1] - 48]->prim->naipe) { //verifica se é do memso naipe
+                    pushCarta(freecell->pNaipe[mover[1] - 48], tmp[0], tmp[1]);// insere
                     return 1;
                 }
         }
@@ -140,6 +141,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
         /*Esta parte significa que a pilha de destino é a reserva. Regra: 
         Cada espaço W, ..., Z pode armazenar no máximo uma carta;
          */
+         if(tmp[0]==NULL)return 0;
         if (vazia(freecell->pReserva[mover[1] - 87])) {
             pushCarta(freecell->pReserva[mover[1] - 87], tmp[0], tmp[1]);
             return 1;
@@ -159,6 +161,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
  */
 void imprimePilhas(Freecell *freecell) {
     int i;
+   // printf("**Cartas**\n");
     for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
         if (!vazia(freecell->pCartas[i])) { //verifica se a pilha está vazia
             printf("%c%c ", freecell->pCartas[i]->prim->naipe, freecell->pCartas[i]->prim->carta);
@@ -166,6 +169,22 @@ void imprimePilhas(Freecell *freecell) {
             printf(" Pilha Vazia  ");
         if (i == 7)printf("\n");
     }
+   /* printf(" Naipe \n");
+    for (i = 0; i < TAM_PILHAS_NAIPE; i++) {
+        if (!vazia(freecell->pNaipe[i])) { //verifica se a pilha está vazia
+            printf("%c%c ", freecell->pNaipe[i]->prim->naipe, freecell->pNaipe[i]->prim->carta);
+        } else
+            printf(" Pilha Vazia  ");
+        if (i == 3)printf("\n");
+    }
+     printf(" Reserva \n");
+    for (i = 0; i < TAM_PILHAS_NAIPE; i++) {
+        if (!vazia(freecell->pReserva[i])) { //verifica se a pilha está vazia
+            printf("%c%c ", freecell->pReserva[i]->prim->naipe, freecell->pReserva[i]->prim->carta);
+        } else
+            printf(" Pilha Vazia  ");
+        if (i == 3)printf("\n");
+    }   */
 }
 
 /**Le um arquivo com os comandos
@@ -173,8 +192,7 @@ void imprimePilhas(Freecell *freecell) {
  * @param freecell instancia do jogo sobre qual serao realizados os comandos
  */
 void play(FILE *arq, Freecell *freecell) {
-    //Teste apenas para ver se todas as pilhas estão com cartas.
-    imprimePilhas(freecell);
+
     if (!arq) {
         printf("Erro na abertura do arquivo, tente novamente:");
         exit(1);
