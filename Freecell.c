@@ -7,7 +7,7 @@
 #define TAM_PILHAS_NAIPE 4
 #define TAM_PILHAS_RESERVA 4
 
-
+int qntprints = 0;
 /* Os naipes estão separados da seguinte forma '0' = copas, '1' = paus, '2' = ouro, '3' = espada
  * As cartas estão separadas da seguinte forma ('A' = às, 'B' = 2, 'C' = 3, ..., 'J' = 10, 'K'
 = Valete, 'L' = Dama, 'M' = Re
@@ -169,6 +169,7 @@ void imprimePilhas(Freecell *freecell) {
             printf(" Pilha Vazia  ");
         if (i == 7)printf("\n");
     }
+    // Parte de teste, apenas para verificar se as outras pilhas também estão com as cartas corretas!
    /* printf(" Naipe \n");
     for (i = 0; i < TAM_PILHAS_NAIPE; i++) {
         if (!vazia(freecell->pNaipe[i])) { //verifica se a pilha está vazia
@@ -195,6 +196,7 @@ void play(FILE *arq, Freecell *freecell) {
 
     if (!arq) {
         printf("Erro na abertura do arquivo, tente novamente:");
+        system("pause");
         exit(1);
     }
     char comando[3];
@@ -204,13 +206,14 @@ void play(FILE *arq, Freecell *freecell) {
         fscanf(arq, " %2[^\n]", comando);
         if (comando[0] == '*') {// Se o primeiro caractere do comando for  *  entao sera um comando de impressao do estado atual;
             imprimePilhas(freecell);
+            qntprints++;
         } else { //caso contrario sera um comando de movimentaçao
             int r = moveCartaDaPilha(comando, freecell);
             if (r == -1) scanf("Sting de comando Invalida");
 
         }
     }
-    fclose(arq);
+    printf("%d\n", qntprints);
 }
 
 void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
@@ -220,10 +223,11 @@ void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
     FILE* fp = fopen(caminho, "r"); //abre o arquivo para leitura
     if (!fp) {
         printf("Erro na abertura do arquivo, tente novamente:");
+        system("pause");
         exit(1);
     }
 
-    char tmp[3]; // Não sei o motivo mas têm que ser tamanho mínimo 3 e não 2. :s EDIT: AGORA LEMBREI QUE TEM Q TER O CARACTERE '\0' INDICANDO FIM DA LINHA
+    char tmp[3];
     while (!feof(fp) && cont < 52) {
         fscanf(fp, " %2[^\n]", tmp); // lê até dois caracteres ou até um caractere de nova linha.
         pushCarta(freecell->pCartas[contPilha], tmp[0], tmp[1]);
@@ -248,11 +252,12 @@ Freecell* inicializaFreecell(void) {
     if (freecell->pCartas != NULL) {
         for (i = 0; i < TAM_PILHAS_CARTAS; i++) {
             freecell->pCartas[i] = criaPilhaDeCartas();
-            printf("%p\n", &freecell->pCartas[i]); //Imprime na tela os endereços  dos ponteiros Cartas
+
         }
         printf("\n");
     } else {
         printf("Erro na alocação do vetor freecell->cartas");
+        system("pause");
         exit(10);
     }
     //Aloca espaço TAM_PILAS_NAIPE ponteiros de pilhas de naipe
@@ -260,11 +265,11 @@ Freecell* inicializaFreecell(void) {
     if (freecell->pNaipe != NULL) {
         for (i = 0; i < TAM_PILHAS_NAIPE; i++) {
             freecell->pNaipe[i] = criaPilhaDeCartas();
-            printf("%p\n", &freecell->pNaipe[i]);
         }
         printf("\n");
     } else {
         printf("Erro na alocação do vetor freecell->naipe");
+        system("pause");
         exit(11);
     }
     //Aloca espaço TAM_PILAS_RESERVA ponteiros de pilhas de reserva
@@ -272,11 +277,11 @@ Freecell* inicializaFreecell(void) {
     if (freecell->pReserva != NULL) {
         for (i = 0; i < TAM_PILHAS_RESERVA; i++) {
             freecell->pReserva[i] = criaPilhaDeCartas();
-            printf("%p\n", &freecell->pReserva[i]);
         }
         printf("\n");
     } else {
         printf("Erro na alocação do vetor freecell->reserva");
+        system("pause");
         exit(12);
     }
     return freecell;
