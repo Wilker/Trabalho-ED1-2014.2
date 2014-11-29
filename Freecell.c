@@ -87,11 +87,11 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
         //tmp[0] => naipe // tmp[1]=> carta
         if(tmp[0]==NULL)return 0;
         if ((vazia(freecell->pCartas[mover[1]-65])) || //verifica se pilha de destino está vazia
-                ((tmp[0] == '0' || tmp[0] == '2') && // Verifica se o naipe é de cor diferente
-                (freecell->pCartas[mover[1] - 65]->prim->naipe == '1') || (freecell->pCartas[mover[1] - 65]->prim->naipe == '3')) ||
-                ((tmp[0] == '1' || tmp[0] == '3')) &&
-                (freecell->pCartas[mover[1] - 65]->prim->naipe == '0') || (freecell->pCartas[mover[1] - 65]->prim->naipe == '1') || // Fim da verificação da cor do naipe
-                (tmp[1]-1 == freecell->pCartas[mover[1] - 65]->prim->carta))//vefica se está em ordem decrescente
+                (((tmp[0] == '0' || tmp[0] == '2') && // Verifica se o naipe da carta de origem é vermelho e
+                (freecell->pCartas[mover[1] - 65]->prim->naipe == '1') || (freecell->pCartas[mover[1] - 65]->prim->naipe == '3')) ||//verifica se o naipe de origem é preto
+                             ((tmp[0] == '1' || tmp[0] == '3')) && //Verifica se o naipe da carta de origem é preto e
+                             (freecell->pCartas[mover[1] - 65]->prim->naipe == '0') || (freecell->pCartas[mover[1] - 65]->prim->naipe == '2')) || //verifica se o naipa de origem é vermelho
+           (tmp[1]-1 == freecell->pCartas[mover[1] - 65]->prim->carta))//vefica se está em ordem decrescente
         {
             pushCarta(freecell->pCartas[mover[1] - 65], tmp[0], tmp[1]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
             return 1;
