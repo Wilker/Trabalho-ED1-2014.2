@@ -52,7 +52,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
             tmp = pop(freecell->pCartas[mover[0] - 65]); // Código ASCII da Letra A é 65, descontando 65 dará a pilha correta que devera ser movida a carta
             posOrigem = mover[0] - 65;
             pilhaOrigem = 'c';
-        }else tmp[0]=NULL;
+        }else tmp[0]='\0';
     }
     if ((mover[0] >= '0') && (mover[0] <= '3')) { //Se estiver neste intervalo é a pilha de naipe
         //Se não tiver vazia realiza o pop!
@@ -60,7 +60,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
             tmp = pop(freecell->pNaipe[mover[0]-48]);
             posOrigem = mover[0] - 48;
             pilhaOrigem = 'n';
-        }else tmp[0]=NULL;
+        }else tmp[0]='\0';
     }
     if ((mover[0] >= 'W') && (mover[0] <= 'Z')) { //Se estiver neste intervalo é a pilha de naipe
         //Se não tiver vazia realiza o pop!
@@ -68,7 +68,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
             tmp = pop(freecell->pReserva[mover[0] - 87]); // Código ASCII da Letra W é  87, descontando 65 dará a pilha correta que devera ser movida a carta
             posOrigem = mover[0] - 87;
             pilhaOrigem = 'r';
-        }else tmp[0]=NULL;
+        }else tmp[0]='\0';
     }
 
     //Esta parte, resolve a pilha de destino
@@ -84,7 +84,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
         carta é aceita;
          */
         //tmp[0] => naipe // tmp[1]=> carta
-        if(tmp[0]==NULL)return 0;
+        if(!tmp[0])return 0;
         if ((vazia(freecell->pCartas[mover[1]-65])) || //verifica se pilha de destino está vazia
                 (((tmp[0] == '0' || tmp[0] == '2') && // Verifica se o naipe da carta de origem é vermelho e
                 (freecell->pCartas[mover[1] - 65]->prim->naipe == '1') || (freecell->pCartas[mover[1] - 65]->prim->naipe == '3')) ||//verifica se o naipe de origem é preto
@@ -114,7 +114,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
             2 de copas, e assim por diante;
          */
         //tmp[0] => naipe // tmp[1]=> carta
-         if(tmp[0]==NULL)return 0;
+         if(!tmp[0])return 0;
         if (vazia(freecell->pNaipe[mover[1] - 48]) && (tmp[1] == 'A')) {// se estiver vazia e a carta for um AS, insere
             pushCarta(freecell->pNaipe[mover[1] - 48], tmp[0], tmp[1]);
             return 1;
@@ -140,7 +140,7 @@ int moveCartaDaPilha(char *mover, Freecell *freecell) {
         /*Esta parte significa que a pilha de destino é a reserva. Regra: 
         Cada espaço W, ..., Z pode armazenar no máximo uma carta;
          */
-         if(tmp[0]==NULL)return 0;
+         if(!tmp[0])return 0;
         if (vazia(freecell->pReserva[mover[1] - 87])) {
             pushCarta(freecell->pReserva[mover[1] - 87], tmp[0], tmp[1]);
             return 1;
