@@ -7,7 +7,6 @@
 #define TAM_PILHAS_NAIPE 4
 #define TAM_PILHAS_RESERVA 4
 
-int qntprints = 0;
 /* Os naipes estão separados da seguinte forma '0' = copas, '1' = paus, '2' = ouro, '3' = espada
  * As cartas estão separadas da seguinte forma ('A' = às, 'B' = 2, 'C' = 3, ..., 'J' = 10, 'K'
 = Valete, 'L' = Dama, 'M' = Re
@@ -166,7 +165,7 @@ void imprimePilhas(Freecell *freecell) {
         if (!vazia(freecell->pCartas[i])) { //verifica se a pilha está vazia
             printf("%c%c ", freecell->pCartas[i]->prim->naipe, freecell->pCartas[i]->prim->carta);
         } else
-            printf(" Pilha Vazia  ");
+            printf("** ");
         if (i == 7)printf("\n");
     }
     // Parte de teste, apenas para verificar se as outras pilhas também estão com as cartas corretas!
@@ -206,14 +205,12 @@ void play(FILE *arq, Freecell *freecell) {
         fscanf(arq, " %2[^\n]", comando);
         if (comando[0] == '*') {// Se o primeiro caractere do comando for  *  entao sera um comando de impressao do estado atual;
             imprimePilhas(freecell);
-            qntprints++;
         } else { //caso contrario sera um comando de movimentaçao
             int r = moveCartaDaPilha(comando, freecell);
             if (r == -1) scanf("Sting de comando Invalida");
 
         }
     }
-    printf("%d\n", qntprints);
 }
 
 void preenchePilhaDeCartas(Freecell *freecell, char* caminho) {
