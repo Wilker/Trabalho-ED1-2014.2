@@ -14,12 +14,12 @@ int main(int argc, char **argv) {
     printf("%s\n", argv[1]);
     if (argc < 2) {
         printf("Passe o arquivo via linha de comando!!");
-        system("PAUSE");
+        system("pause");
         exit(1);
     }
     Freecell* jogo = inicializaFreecell();
     preenchePilhaDeCartas(jogo, argv[1]);
     free(jogo);
-    system("PAUSE");
+    system("pause");
     return 0;
 }
