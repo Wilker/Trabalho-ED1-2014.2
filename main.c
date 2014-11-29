@@ -10,13 +10,13 @@
  * 
  */
 int main(int argc, char **argv) {
-    printf("%d\n", argc);
-    printf("%s\n", argv[1]);
     if (argc < 2) {
         printf("Passe o arquivo via linha de comando!!");
         system("pause");
         exit(1);
     }
+    printf("%d\n", argc);
+    printf("%s\n", argv[1]);
     Freecell* jogo = inicializaFreecell();
     preenchePilhaDeCartas(jogo, argv[1]);
     free(jogo);
